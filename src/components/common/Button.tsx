@@ -10,6 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
+  // ssss
   size = 'medium',
   isLoading = false,
   icon,

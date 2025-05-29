@@ -15,7 +15,7 @@ const PatientConsultations = lazy(() => import('./pages/patient/PatientConsultat
 const DoctorPatients = lazy(() => import('./pages/doctor/DoctorPatients'));
 const DoctorReports = lazy(() => import('./pages/doctor/DoctorReports'));
 const DoctorPrescriptions = lazy(() => import('./pages/doctor/DoctorPrescriptions'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage')); 
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
