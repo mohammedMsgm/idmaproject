@@ -2,16 +2,17 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth, mockDoctors } from '../../contexts/AuthContext';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
 
 interface RegisterFormData {
   name: string;
   email: string;
-  password: string;
+  password: string; 
   confirmPassword: string;
   userType: 'patient' | 'doctor';
+  doctorId?: string;
 }
 
 const RegisterPage = () => {
@@ -19,7 +20,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const {
     register,
     handleSubmit,
@@ -30,15 +31,29 @@ const RegisterPage = () => {
       userType: 'patient',
     },
   });
-  
+
+  const userType = watch('userType');
   const password = watch('password');
-  
+
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     setError(null);
-    
+
+    if (data.userType === 'patient' && !data.doctorId) {
+      setError('يرجى اختيار الطبيب المعالج');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      await registerUser(data.name, data.email, data.password, data.userType);
+      await registerUser(
+        data.name,
+        data.email,
+        data.password,
+        data.userType,
+        data.userType === 'patient' ? data.doctorId : undefined
+      );
+
       navigate(data.userType === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
     } catch (error) {
       setError('حدث خطأ أثناء إنشاء الحساب. يرجى المحاولة مرة أخرى.');
@@ -46,7 +61,7 @@ const RegisterPage = () => {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="max-w-md mx-auto">
       <motion.div
@@ -55,19 +70,18 @@ const RegisterPage = () => {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-8">إنشاء حساب جديد</h1>
-        
+
         <Card>
           {error && (
             <div className="bg-red-50 text-red-700 p-4 rounded-md mb-6">
               <p>{error}</p>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit(onSubmit)}>
+            {/* نوع الحساب */}
             <div className="mb-4">
-              <label htmlFor="userType" className="label">
-                نوع الحساب
-              </label>
+              <label htmlFor="userType" className="label">نوع الحساب</label>
               <div className="flex space-x-4 space-x-reverse mb-2">
                 <label className="flex items-center">
                   <input
@@ -89,11 +103,29 @@ const RegisterPage = () => {
                 </label>
               </div>
             </div>
-            
+
+            {/* اختيار الطبيب إذا كان مريض */}
+            {userType === 'patient' && (
+              <div className="mb-4">
+                <label htmlFor="doctorId" className="label">اختر الطبيب المعالج</label>
+                <select
+                  id="doctorId"
+                  {...register('doctorId')}
+                  className="input"
+                >
+                  <option value="">-- اختر الطبيب --</option>
+                  {mockDoctors.map(doctor => (
+                    <option key={doctor.id} value={doctor.id}>
+                      {doctor.name} - {doctor.specialization}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* الاسم */}
             <div className="mb-4">
-              <label htmlFor="name" className="label">
-                الاسم الكامل
-              </label>
+              <label htmlFor="name" className="label">الاسم الكامل</label>
               <input
                 id="name"
                 type="text"
@@ -106,15 +138,12 @@ const RegisterPage = () => {
                 })}
                 className="input"
               />
-              {errors.name && (
-                <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
             </div>
-            
+
+            {/* البريد الإلكتروني */}
             <div className="mb-4">
-              <label htmlFor="email" className="label">
-                البريد الإلكتروني
-              </label>
+              <label htmlFor="email" className="label">البريد الإلكتروني</label>
               <input
                 id="email"
                 type="email"
@@ -127,15 +156,12 @@ const RegisterPage = () => {
                 })}
                 className="input"
               />
-              {errors.email && (
-                <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email.message}</p>}
             </div>
-            
+
+            {/* كلمة المرور */}
             <div className="mb-4">
-              <label htmlFor="password" className="label">
-                كلمة المرور
-              </label>
+              <label htmlFor="password" className="label">كلمة المرور</label>
               <input
                 id="password"
                 type="password"
@@ -152,11 +178,10 @@ const RegisterPage = () => {
                 <p className="text-red-600 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
-            
+
+            {/* تأكيد كلمة المرور */}
             <div className="mb-6">
-              <label htmlFor="confirmPassword" className="label">
-                تأكيد كلمة المرور
-              </label>
+              <label htmlFor="confirmPassword" className="label">تأكيد كلمة المرور</label>
               <input
                 id="confirmPassword"
                 type="password"
@@ -173,7 +198,7 @@ const RegisterPage = () => {
                 </p>
               )}
             </div>
-            
+
             <Button
               type="submit"
               variant="primary"
@@ -182,7 +207,7 @@ const RegisterPage = () => {
             >
               إنشاء حساب
             </Button>
-            
+
             <div className="mt-4 text-center">
               <p className="text-gray-600">
                 لديك حساب بالفعل؟{' '}
