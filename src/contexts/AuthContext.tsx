@@ -29,7 +29,9 @@ interface AuthContextType {
 
 export const mockDoctors = [
   { id: 'doc-1', name: 'د. خالد العمري', specialization: 'طب نفسي' },
-  { id: 'doc-2', name: 'د. ليلى حسن', specialization: 'طب الأطفال' },
+  { id: 'doc-2', name: 'د. ليلى حسن', specialization: 'اخصائي اجتماعي'},
+  { id: 'doc-2', name: 'د. سيداني منير', specialization: 'اخصائي نفساني' },
+  { id: 'doc-2', name: 'د. بورزق عائشة', specialization: 'اخصائي اجتماعي' },
 ];
 
 

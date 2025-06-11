@@ -24,7 +24,8 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <Logo className="h-10 w-10" />
+              {/* <Logo className="h-10 w-10" /> */}
+              <img src="../../../public/ss (2).png" alt="مركز الأمل" className="hidden md:block h-[70px] w-[80px]" />
               <span className="mr-3 text-xl font-bold text-primary-700">مركز الأمل</span>
             </Link>
           </div>
