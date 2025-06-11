@@ -14,6 +14,7 @@ const Card: React.FC<CardProps> = ({ title, className = '', children }) => {
           <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         </div>
       )}
+      
       <div className="p-6">{children}</div>
     </div>
   );
