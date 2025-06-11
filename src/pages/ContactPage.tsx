@@ -93,21 +93,21 @@ const ContactPage = () => {
     {
       icon: <Phone className="h-6 w-6 text-primary-500" />,
       title: 'الهاتف',
-      info: '+966 12 345 6789',
+      info: '0558383523',
       action: 'اتصل بنا',
-      link: 'tel:+966123456789',
+      link: 'tel:0558383523',
     },
     {
       icon: <Mail className="h-6 w-6 text-primary-500" />,
       title: 'البريد الإلكتروني',
-      info: 'info@alamal-center.com',
+      info: 'kariemaaicha@gmail.com',
       action: 'راسلنا',
-      link: 'mailto:info@alamal-center.com',
+      link: 'mailto:kariemaaicha@gmail.com',
     },
     {
       icon: <MapPin className="h-6 w-6 text-primary-500" />,
       title: 'العنوان',
-      info: 'الرياض، المملكة العربية السعودية',
+      info: '  المسيلة - الجزائر',
       action: 'احصل على الاتجاهات',
       link: 'https://maps.google.com',
     },
@@ -330,7 +330,7 @@ const ContactPage = () => {
           <Card className="h-80">
             <div className="h-full rounded-md overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d463876.9975734667!2d46.54234752056931!3d24.725555291533735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2sus!4v1653046680395!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d103863.98728379533!2d4.429349470500377!3d35.70727229099433!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128b53ad7a74e91f%3A0x36de4fc0d1ac9e61!2sM&#39;sila%2C%20Alg%C3%A9rie!5e0!3m2!1sfr!2sdz!4v1718119640000!5m2!1sfr!2sdz"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

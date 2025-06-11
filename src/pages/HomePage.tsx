@@ -48,7 +48,7 @@ const HomePage = () => {
     {
       icon: <Clock className="h-10 w-10 text-primary-500" />,
       title: 'دعم مستمر',
-      description: 'نقدم الدعم على مدار الساعة لضمان استمرارية التعافي',
+      description: 'نقدم الدعم على مدار الساعة لضمان استمرارية التعافي. كل جلسة بـ 1500 دينار جزائري',
     },
     {
       icon: <Award className="h-10 w-10 text-primary-500" />,
@@ -76,7 +76,7 @@ const HomePage = () => {
     {
       number: '4',
       title: 'المتابعة',
-      description: 'متابعة مستمرة وتقييم التقدم في رحلة التعافي',
+      description: 'متابعة مستمرة وتقييم التقدم في رحلة التعافي. كل جلسة بـ 1500 دينار جزائري',
     },
   ];
   
@@ -93,7 +93,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                مركز الأمل لعلاج إدمان المراهقين
+                مركز امل للاستشارات وعلاج الادمان للمراهقين
               </motion.h1>
               <motion.p
                 className="text-xl text-gray-600 mb-8"
