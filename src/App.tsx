@@ -18,6 +18,7 @@ const DoctorPrescriptions = lazy(() => import('./pages/doctor/DoctorPrescription
 const AboutPage = lazy(() => import('./pages/AboutPage')); 
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+ 
 
 function App() {
   return (
