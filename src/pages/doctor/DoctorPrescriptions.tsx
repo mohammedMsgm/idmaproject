@@ -68,11 +68,6 @@ const DoctorPrescriptions = () => {
           avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150',
         },
         {
-          id: 'pat-2',
-          name: 'سارة أحمد',
-          avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150',
-        },
-        {
           id: 'pat-3',
           name: 'محمد علي',
           avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=150',

@@ -54,17 +54,6 @@ const DoctorPatients = () => {
           avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150',
         },
         {
-          id: 'pat-2',
-          name: 'سارة أحمد',
-          age: 16,
-          gender: 'female',
-          treatmentStart: '2025-04-02',
-          lastVisit: '2025-05-08',
-          diagnosis: 'اكتئاب خفيف',
-          status: 'active',
-          avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150',
-        },
-        {
           id: 'pat-3',
           name: 'محمد علي',
           age: 15,
