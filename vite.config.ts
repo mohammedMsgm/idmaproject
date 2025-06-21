@@ -11,10 +11,12 @@ export default defineConfig({
     'process.env': process.env
   },
   server: {
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+        secure: false
       }
     }
   },
@@ -22,6 +24,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
