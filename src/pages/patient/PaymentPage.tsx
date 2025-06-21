@@ -170,8 +170,7 @@ const PaymentPage: React.FC = () => {
                 <DollarSign className="w-6 h-6 ml-2" />
                 اختر باقة الخدمة
               </h2>
-              
-              <div className="space-y-4">
+                <div className="space-y-6 mt-2">
                 {servicePackages.map((pkg, index) => (
                   <motion.div
                     key={pkg.id}
@@ -179,18 +178,19 @@ const PaymentPage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
                     onClick={() => setSelectedPackage(pkg.id)}
-                    className="cursor-pointer"
-                  >                    <Card className={`relative overflow-visible transition-all duration-200 hover:shadow-lg ${
+                    className="cursor-pointer relative"
+                  >
+                    {pkg.popular && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-semibold z-20 shadow-lg">
+                        الأكثر شعبية
+                      </div>
+                    )}
+                    <Card className={`transition-all duration-200 hover:shadow-lg ${
                       selectedPackage === pkg.id 
                         ? 'ring-2 ring-blue-500 shadow-lg' 
                         : 'hover:ring-1 hover:ring-gray-300'
-                    }`}>
-                      {pkg.popular && (
-                        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold z-10 whitespace-nowrap">
-                          الأكثر شعبية
-                        </div>
-                      )}                      
-                      <div className={`p-6 ${pkg.popular ? 'pt-8' : ''}`}>
+                    } ${pkg.popular ? 'mt-4' : ''}`}>                      
+                      <div className="p-6">
                         <div className="flex justify-between items-start mb-4">
                           <div>
                             <h3 className="text-xl font-bold text-gray-900 mb-1">
