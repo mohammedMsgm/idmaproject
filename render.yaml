@@ -1,0 +1,30 @@
+services:
+  # Backend API Service
+  - type: web
+    name: idma-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: idma-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://idma-frontend.onrender.com  # Update with your frontend URL
+
+  # Frontend Service
+  - type: web
+    name: idma-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+
+# Optional: If you want to create the database through render.yaml
+# databases:
+#   - name: idma-db
+#     databaseName: idma_platform
+#     user: idma_user

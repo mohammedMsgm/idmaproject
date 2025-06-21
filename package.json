@@ -2,18 +2,19 @@
   "name": "al-amal-center",
   "private": true,
   "version": "0.1.0",
-  "type": "module",
-  "scripts": {
+  "type": "module",  "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server.js",
+    "server:prod": "NODE_ENV=production node server.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
     "db:init": "node scripts/test-db.js",
     "db:setup": "\"C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe\" -U postgres -d idma_platform -f \"database\\schema.sql\"",
     "db:create": "\"C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe\" -U postgres -c \"CREATE DATABASE idma_platform;\"",
-    "db:connect": "\"C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe\" -U postgres -d idma_platform"
+    "db:connect": "\"C:\\Program Files\\PostgreSQL\\17\\bin\\psql.exe\" -U postgres -d idma_platform",
+    "start": "node server.js"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -9,8 +9,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// CORS configuration for production and development
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL || 'https://your-frontend-app.onrender.com']
+    : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes

@@ -14,7 +14,10 @@ export interface AuthResponse {
   message?: string;
 }
 
-const API_BASE_URL = '/api';
+// API Base URL - dynamically set based on environment
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://your-backend-app.onrender.com/api'  // Replace with your actual backend URL
+  : '/api';
 
 // Login function that calls backend API
 export const loginUser = async (
