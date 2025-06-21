@@ -4,8 +4,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { getPatientDoctor } from '../../services/authAPI';
 import { 
   Calendar, 
-  Clock
+  Clock,
+  CreditCard,
+  FileText
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface Doctor {
   id: string;
@@ -224,6 +227,44 @@ const PatientDashboard = () => {
         ) : (
           <p>لا توجد مواعيد سابقة.</p>
         )}
+      </motion.section>
+
+      {/* Quick Actions */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.25 }}
+        className="mb-8"
+      >
+        <h2 className="text-xl font-semibold mb-4">الإجراءات السريعة</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link 
+            to="/patient/payment"
+            className="bg-blue-600 hover:bg-blue-700 text-white p-6 rounded-lg shadow-md transition-colors duration-200 text-center group"
+          >
+            <CreditCard className="h-8 w-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2">دفع ثمن الخدمات</h3>
+            <p className="text-sm opacity-90">ادفع مقابل الخدمات الطبية</p>
+          </Link>
+          
+          <Link 
+            to="/patient/consultations"
+            className="bg-green-600 hover:bg-green-700 text-white p-6 rounded-lg shadow-md transition-colors duration-200 text-center group"
+          >
+            <Calendar className="h-8 w-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2">المواعيد</h3>
+            <p className="text-sm opacity-90">عرض وإدارة المواعيد</p>
+          </Link>
+          
+          <Link 
+            to="/patient/reports"
+            className="bg-purple-600 hover:bg-purple-700 text-white p-6 rounded-lg shadow-md transition-colors duration-200 text-center group"
+          >
+            <FileText className="h-8 w-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="text-lg font-semibold mb-2">التقارير الطبية</h3>
+            <p className="text-sm opacity-90">عرض التقارير والنتائج</p>
+          </Link>
+        </div>
       </motion.section>
     </div>
   );
