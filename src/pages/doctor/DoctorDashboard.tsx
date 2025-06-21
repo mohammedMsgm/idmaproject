@@ -131,15 +131,14 @@ const DoctorDashboard = () => {
   
   const upcomingAppointments = appointments.filter(app => app.status === 'scheduled');
   const recentAppointments = appointments.filter(app => app.status === 'completed');
-  
-  // Function to format date
+    // Function to format date
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString('ar-SA', options);
+    return new Date(dateString).toLocaleDateString('ar', options);
   };
   
   const containerVariants = {

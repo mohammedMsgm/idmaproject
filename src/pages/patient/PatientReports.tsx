@@ -2,7 +2,17 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Download, Filter, ChevronDown } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { getPatientDoctor } from '../../services/authAPI';
 import Card from '../../components/common/Card';
+
+interface Report {
+  id: string;
+  title: string;
+  date: string;
+  doctorName: string;
+  type: 'report' | 'prescription';
+  content: string;
+}
 
 interface Report {
   id: string;
@@ -22,70 +32,79 @@ const PatientReports = () => {
   const [showFilters, setShowFilters] = useState(false);
   
   useEffect(() => {
-    // Mock API call to fetch reports
-    const fetchReports = async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock data
-      const mockReports: Report[] = [
-        {
-          id: 'rep-1',
-          title: 'تقرير الجلسة العلاجية الأسبوعية',
-          date: '2025-05-10',
-          doctorName: 'د. خالد العمري',
-          type: 'report',
-          content: 'خلال الجلسة العلاجية الأسبوعية، لاحظنا تحسنًا في المزاج العام للمريض وانخفاضًا في مستويات القلق. استمر المريض في الالتزام بخطة العلاج وأظهر تقدمًا جيدًا في التعامل مع التحديات اليومية. ننصح بالاستمرار في ممارسة تمارين الاسترخاء والتأمل اليومية، وكذلك الالتزام بمواعيد الجلسات العلاجية الأسبوعية.',
-        },
-        {
-          id: 'rep-2',
-          title: 'وصفة علاجية شهرية',
-          date: '2025-05-05',
-          doctorName: 'د. خالد العمري',
-          type: 'prescription',
-          content: 'الدواء الأول: [اسم الدواء] - 10 ملغ - مرة واحدة صباحًا\nالدواء الثاني: [اسم الدواء] - 5 ملغ - مرتين يوميًا بعد الوجبات\n\nملاحظات: يرجى الالتزام بالجرعات المحددة والمواعيد. يجب متابعة أي آثار جانبية وإبلاغ الطبيب فورًا في حالة ظهور أي أعراض غير طبيعية.',
-        },
-        {
-          id: 'rep-3',
-          title: 'تقييم التقدم في خطة العلاج',
-          date: '2025-04-28',
-          doctorName: 'د. خالد العمري',
-          type: 'report',
-          content: 'بعد مرور شهر على بدء خطة العلاج، نلاحظ تحسنًا ملحوظًا في الحالة العامة للمريض. انخفضت مستويات القلق والتوتر بنسبة 30%، وتحسنت أنماط النوم بشكل ملحوظ. يستمر المريض في الالتزام بجلسات العلاج النفسي وتمارين الاسترخاء اليومية. ننصح بالاستمرار في اتباع الخطة العلاجية الحالية مع تعديلات طفيفة في الجرعات الدوائية كما هو موضح في الوصفة الطبية المرفقة.',
-        },
-        {
-          id: 'rep-4',
-          title: 'وصفة علاجية',
-          date: '2025-04-15',
-          doctorName: 'د. خالد العمري',
-          type: 'prescription',
-          content: 'الدواء الأول: [اسم الدواء] - 15 ملغ - مرة واحدة صباحًا\nالدواء الثاني: [اسم الدواء] - 7.5 ملغ - مرتين يوميًا بعد الوجبات\n\nملاحظات: يرجى الالتزام بالجرعات المحددة والمواعيد. يجب متابعة أي آثار جانبية وإبلاغ الطبيب فورًا في حالة ظهور أي أعراض غير طبيعية.',
-        },
-        {
-          id: 'rep-5',
-          title: 'التقرير الأولي بعد التقييم',
-          date: '2025-04-02',
-          doctorName: 'د. خالد العمري',
-          type: 'report',
-          content: 'بعد إجراء التقييم الأولي، تم تشخيص المريض بـ [التشخيص]. تم وضع خطة علاجية تتضمن جلسات العلاج النفسي الأسبوعية، وتمارين الاسترخاء اليومية، بالإضافة إلى العلاج الدوائي. الهدف الرئيسي من الخطة العلاجية هو تحسين نوعية الحياة وتقليل أعراض القلق والتوتر. سيتم إجراء تقييم دوري كل شهر لمتابعة التقدم في الخطة العلاجية وإجراء التعديلات اللازمة.',
-        },
-      ];
-      
-      setReports(mockReports);
-      setLoading(false);
+    const fetchReportsData = async () => {
+      if (!user?.id) return;
+
+      try {
+        setLoading(true);
+        
+        // Fetch patient's assigned doctor
+        const doctorResponse = await getPatientDoctor(user.id);
+        
+        if (doctorResponse.success && doctorResponse.doctor) {
+          // Generate mock reports using the patient's assigned doctor
+          const mockReports: Report[] = [
+            {
+              id: 'rep-1',
+              title: 'تقرير الجلسة العلاجية الأسبوعية',
+              date: '2025-05-10',
+              doctorName: doctorResponse.doctor.name,
+              type: 'report',
+              content: 'خلال الجلسة العلاجية الأسبوعية، لاحظنا تحسنًا في المزاج العام للمريض وانخفاضًا في مستويات القلق. استمر المريض في الالتزام بخطة العلاج وأظهر تقدمًا جيدًا في التعامل مع التحديات اليومية. ننصح بالاستمرار في ممارسة تمارين الاسترخاء والتأمل اليومية، وكذلك الالتزام بمواعيد الجلسات العلاجية الأسبوعية.',
+            },
+            {
+              id: 'rep-2',
+              title: 'وصفة علاجية شهرية',
+              date: '2025-05-05',
+              doctorName: doctorResponse.doctor.name,
+              type: 'prescription',
+              content: 'الدواء الأول: [اسم الدواء] - 10 ملغ - مرة واحدة صباحًا\nالدواء الثاني: [اسم الدواء] - 5 ملغ - مرتين يوميًا بعد الوجبات\n\nملاحظات: يرجى الالتزام بالجرعات المحددة والمواعيد. يجب متابعة أي آثار جانبية وإبلاغ الطبيب فورًا في حالة ظهور أي أعراض غير طبيعية.',
+            },
+            {
+              id: 'rep-3',
+              title: 'تقييم التقدم في خطة العلاج',
+              date: '2025-04-28',
+              doctorName: doctorResponse.doctor.name,
+              type: 'report',
+              content: 'بعد مرور شهر على بدء خطة العلاج، نلاحظ تحسنًا ملحوظًا في الحالة العامة للمريض. انخفضت مستويات القلق والتوتر بنسبة 30%، وتحسنت أنماط النوم بشكل ملحوظ. يستمر المريض في الالتزام بجلسات العلاج النفسي وتمارين الاسترخاء اليومية. ننصح بالاستمرار في اتباع الخطة العلاجية الحالية مع تعديلات طفيفة في الجرعات الدوائية كما هو موضح في الوصفة الطبية المرفقة.',
+            },
+            {
+              id: 'rep-4',
+              title: 'وصفة علاجية',
+              date: '2025-04-15',
+              doctorName: doctorResponse.doctor.name,
+              type: 'prescription',
+              content: 'الدواء الأول: [اسم الدواء] - 15 ملغ - مرة واحدة صباحًا\nالدواء الثاني: [اسم الدواء] - 7.5 ملغ - مرتين يوميًا بعد الوجبات\n\nملاحظات: يرجى الالتزام بالجرعات المحددة والمواعيد. يجب متابعة أي آثار جانبية وإبلاغ الطبيب فورًا في حالة ظهور أي أعراض غير طبيعية.',
+            },
+            {
+              id: 'rep-5',
+              title: 'التقرير الأولي بعد التقييم',
+              date: '2025-04-02',
+              doctorName: doctorResponse.doctor.name,
+              type: 'report',
+              content: 'بعد إجراء التقييم الأولي، تم تشخيص المريض بـ [التشخيص]. تم وضع خطة علاجية تتضمن جلسات العلاج النفسي الأسبوعية، وتمارين الاسترخاء اليومية، بالإضافة إلى العلاج الدوائي. الهدف الرئيسي من الخطة العلاجية هو تحسين نوعية الحياة وتقليل أعراض القلق والتوتر. سيتم إجراء تقييم دوري كل شهر لمتابعة التقدم في الخطة العلاجية وإجراء التعديلات اللازمة.',
+            },
+          ];
+          
+          setReports(mockReports);
+        }
+      } catch (error) {
+        console.error('Error fetching reports data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     
-    fetchReports();
-  }, []);
-  
-  // Function to format date
+    fetchReportsData();
+  }, [user?.id]);
+    // Function to format date using normal months (not Islamic calendar)
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString('ar-SA', options);
+    return new Date(dateString).toLocaleDateString('ar', options);
   };
   
   const handleReportClick = (report: Report) => {

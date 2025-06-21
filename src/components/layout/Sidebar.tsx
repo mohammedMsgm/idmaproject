@@ -4,8 +4,7 @@ import {
   FileText, 
   MessageCircle, 
   Users, 
-  Pill, 
-  Settings 
+  Pill
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -15,8 +14,7 @@ const Sidebar = () => {
   
   const isPatient = user?.type === 'patient';
   const isDoctor = user?.type === 'doctor';
-  
-  const patientLinks = [
+    const patientLinks = [
     {
       name: 'لوحة التحكم',
       path: '/patient/dashboard',
@@ -32,14 +30,8 @@ const Sidebar = () => {
       path: '/patient/consultations',
       icon: <MessageCircle className="ml-2 h-5 w-5" />,
     },
-    {
-      name: 'الإعدادات',
-      path: '/patient/settings',
-      icon: <Settings className="ml-2 h-5 w-5" />,
-    },
   ];
-  
-  const doctorLinks = [
+    const doctorLinks = [
     {
       name: 'لوحة التحكم',
       path: '/doctor/dashboard',
@@ -59,11 +51,6 @@ const Sidebar = () => {
       name: 'الوصفات العلاجية',
       path: '/doctor/prescriptions',
       icon: <Pill className="ml-2 h-5 w-5" />,
-    },
-    {
-      name: 'الإعدادات',
-      path: '/doctor/settings',
-      icon: <Settings className="ml-2 h-5 w-5" />,
     },
   ];
   

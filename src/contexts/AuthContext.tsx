@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser, registerUser, getDoctors } from '../services/authAPI';
 
 type UserType = 'patient' | 'doctor' | null;
 
@@ -27,13 +28,21 @@ interface AuthContextType {
   logout: () => void;
 }
 
-export const mockDoctors = [
-  { id: 'doc-1', name: 'د. خالد العمري', specialization: 'طب نفسي' },
-  { id: 'doc-2', name: 'د. ليلى حسن', specialization: 'اخصائي اجتماعي'},
-  { id: 'doc-2', name: 'د. سيداني منير', specialization: 'اخصائي نفساني' },
-  { id: 'doc-2', name: 'د. بورزق عائشة', specialization: 'اخصائي اجتماعي' },
-];
-
+// استرجاع قائمة الأطباء من قاعدة البيانات
+export const fetchDoctors = async () => {
+  try {
+    return await getDoctors();
+  } catch (error) {
+    console.error('Error fetching doctors:', error);
+    // Fallback to static data if database is not available
+    return [
+      { id: '1', name: 'د. خالد العمري', specialization: 'طب نفسي' },
+      { id: '2', name: 'د. ليلى حسن', specialization: 'اخصائي اجتماعي'},
+      { id: '3', name: 'د. سيداني منير', specialization: 'اخصائي نفساني' },
+      { id: '4', name: 'د. بورزق عائشة', specialization: 'اخصائي اجتماعي' },
+    ];
+  }
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -58,26 +67,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(true);
     }
   }, []);
-
-  // تسجيل الدخول (وهمي)
+  // تسجيل الدخول
   const login = async (email: string, password: string, type: UserType) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!type) {
+      throw new Error('نوع المستخدم مطلوب');
+    }
 
-    const mockUser: User = {
-      id: `user-${Date.now()}`,
-      name: type === 'patient' ? 'أحمد محمد' : 'د. سارة الأحمد',
-      email,
-      type,
-      avatar: type === 'doctor' ? '/doctor-avatar.jpg' : '/patient-avatar.jpg',
+    const authResponse = await loginUser(email, password, type);
+    
+    if (!authResponse.success) {
+      throw new Error(authResponse.message || 'فشل في تسجيل الدخول');
+    }
+
+    const user: User = {
+      id: authResponse.user.id,
+      name: authResponse.user.name,
+      email: authResponse.user.email,
+      type: authResponse.user.user_type,
+      avatar: authResponse.user.avatar,
+      doctorId: authResponse.user.doctor_id,
     };
 
-    setUser(mockUser);
+    setUser(user);
     setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('user', JSON.stringify(user));
     navigate(type === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
   };
-
-  // تسجيل مستخدم جديد (وهمي) مع doctorId إن وجد
+  // تسجيل مستخدم جديد
   const register = async (
     name: string,
     email: string,
@@ -85,20 +101,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     type: UserType,
     doctorId?: string
   ) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!type) {
+      throw new Error('نوع المستخدم مطلوب');
+    }
 
-    const mockUser: User = {
-      id: `user-${Date.now()}`,
-      name,
-      email,
-      type,
-      avatar: type === 'doctor' ? '/doctor-avatar.jpg' : '/patient-avatar.jpg',
-      doctorId: type === 'patient' ? doctorId : undefined,
+    const authResponse = await registerUser(name, email, password, type, doctorId);
+    
+    if (!authResponse.success) {
+      throw new Error(authResponse.message || 'فشل في إنشاء الحساب');
+    }
+
+    const user: User = {
+      id: authResponse.user.id,
+      name: authResponse.user.name,
+      email: authResponse.user.email,
+      type: authResponse.user.user_type,
+      avatar: authResponse.user.avatar,
+      doctorId: authResponse.user.doctor_id,
     };
 
-    setUser(mockUser);
+    setUser(user);
     setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('user', JSON.stringify(user));
     navigate(type === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
   };
 

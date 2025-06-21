@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Send, Clock, ChevronLeft } from 'lucide-react';
+import { MessageCircle, Send, ChevronLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../../components/common/Card';
 
@@ -32,142 +32,117 @@ const PatientConsultations = () => {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [showConversations, setShowConversations] = useState(true);
-  
-  useEffect(() => {
+    useEffect(() => {
     // Mock API call to fetch conversations
     const fetchConversations = async () => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock data
+      // Get patient's assigned doctor from user context
+      const patientDoctorId = user?.doctorId;
+      
+      if (!patientDoctorId) {
+        setConversations([]);
+        setLoading(false);
+        return;
+      }
+      
+      // Mock doctor data mapping
+      const doctorProfiles: { [key: string]: { name: string; avatar: string; specialization: string } } = {
+        '6': { name: 'د. خالد العمري', avatar: 'https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=150', specialization: 'طب نفسي' },
+        '7': { name: 'د. ليلى حسن', avatar: 'https://images.pexels.com/photos/5214413/pexels-photo-5214413.jpeg?auto=compress&cs=tinysrgb&w=150', specialization: 'اخصائي اجتماعي' },
+        '8': { name: 'د. سيداني منير', avatar: 'https://images.pexels.com/photos/6129967/pexels-photo-6129967.jpeg?auto=compress&cs=tinysrgb&w=150', specialization: 'اخصائي نفساني' },
+        '9': { name: 'د. بورزق عائشة', avatar: 'https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=150', specialization: 'اخصائي اجتماعي' },
+      };
+      
+      const assignedDoctor = doctorProfiles[patientDoctorId];
+      
+      if (!assignedDoctor) {
+        setConversations([]);
+        setLoading(false);
+        return;
+      }
+      
+      // Create conversation with assigned doctor only
       const mockConversations: Conversation[] = [
         {
-          id: 'conv-1',
-          doctorId: 'doc-1',
-          doctorName: 'د. خالد العمري',
-          doctorAvatar: 'https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=150',
+          id: `conv-${patientDoctorId}`,
+          doctorId: patientDoctorId,
+          doctorName: assignedDoctor.name,
+          doctorAvatar: assignedDoctor.avatar,
           lastMessage: 'كيف حالك اليوم؟ أتمنى أن تكون بخير.',
-          lastMessageTime: '2025-05-12T10:30:00',
+          lastMessageTime: '2025-06-20T10:30:00',
           unreadCount: 2,
           messages: [
             {
-              id: 'msg-1',
-              senderId: 'doc-1',
-              senderName: 'د. خالد العمري',
+              id: `msg-${patientDoctorId}-1`,
+              senderId: patientDoctorId,
+              senderName: assignedDoctor.name,
               senderType: 'doctor',
               content: 'مرحبًا، كيف يمكنني مساعدتك اليوم؟',
-              timestamp: '2025-05-11T09:15:00',
+              timestamp: '2025-06-19T09:15:00',
               read: true,
             },
             {
-              id: 'msg-2',
-              senderId: 'patient-1',
+              id: `msg-${patientDoctorId}-2`,
+              senderId: user?.id || 'patient-1',
               senderName: user?.name || 'المريض',
               senderType: 'patient',
               content: 'مرحبًا دكتور، أشعر بالقلق الشديد في الأيام الأخيرة وأجد صعوبة في النوم.',
-              timestamp: '2025-05-11T09:20:00',
+              timestamp: '2025-06-19T09:20:00',
               read: true,
             },
             {
-              id: 'msg-3',
-              senderId: 'doc-1',
-              senderName: 'د. خالد العمري',
+              id: `msg-${patientDoctorId}-3`,
+              senderId: patientDoctorId,
+              senderName: assignedDoctor.name,
               senderType: 'doctor',
               content: 'أنا آسف لسماع ذلك. هل هناك أي تغييرات حدثت مؤخرًا في حياتك أو روتينك اليومي؟',
-              timestamp: '2025-05-11T09:25:00',
+              timestamp: '2025-06-19T09:25:00',
               read: true,
             },
             {
-              id: 'msg-4',
-              senderId: 'patient-1',
+              id: `msg-${patientDoctorId}-4`,
+              senderId: user?.id || 'patient-1',
               senderName: user?.name || 'المريض',
               senderType: 'patient',
               content: 'نعم، لقد بدأت في الدراسة في مدرسة جديدة الأسبوع الماضي وأشعر بالتوتر حيال ذلك.',
-              timestamp: '2025-05-11T09:30:00',
+              timestamp: '2025-06-19T09:30:00',
               read: true,
             },
             {
-              id: 'msg-5',
-              senderId: 'doc-1',
-              senderName: 'د. خالد العمري',
+              id: `msg-${patientDoctorId}-5`,
+              senderId: patientDoctorId,
+              senderName: assignedDoctor.name,
               senderType: 'doctor',
               content: 'أفهم الآن. التغييرات الكبيرة يمكن أن تسبب التوتر والقلق. دعني أقترح بعض تقنيات الاسترخاء التي يمكنك تجربتها قبل النوم.',
-              timestamp: '2025-05-11T09:35:00',
+              timestamp: '2025-06-19T09:35:00',
               read: true,
             },
             {
-              id: 'msg-6',
-              senderId: 'doc-1',
-              senderName: 'د. خالد العمري',
+              id: `msg-${patientDoctorId}-6`,
+              senderId: patientDoctorId,
+              senderName: assignedDoctor.name,
               senderType: 'doctor',
               content: 'كيف حالك اليوم؟ أتمنى أن تكون بخير.',
-              timestamp: '2025-05-12T10:30:00',
+              timestamp: '2025-06-20T10:30:00',
               read: false,
             },
           ],
         },
-        {
-          id: 'conv-2',
-          doctorId: 'doc-2',
-          doctorName: 'د. سارة الأحمد',
-          doctorAvatar: 'https://images.pexels.com/photos/5214413/pexels-photo-5214413.jpeg?auto=compress&cs=tinysrgb&w=150',
-          lastMessage: 'تم تحديث خطة العلاج الخاصة بك. يرجى الاطلاع عليها.',
-          lastMessageTime: '2025-05-10T14:45:00',
-          unreadCount: 0,
-          messages: [
-            {
-              id: 'msg-7',
-              senderId: 'doc-2',
-              senderName: 'د. سارة الأحمد',
-              senderType: 'doctor',
-              content: 'مرحبًا، أود إعلامك بأنني قمت بمراجعة تقاريرك الأخيرة.',
-              timestamp: '2025-05-10T14:30:00',
-              read: true,
-            },
-            {
-              id: 'msg-8',
-              senderId: 'patient-1',
-              senderName: user?.name || 'المريض',
-              senderType: 'patient',
-              content: 'شكرًا لك دكتورة، هل هناك أي تغييرات في خطة العلاج؟',
-              timestamp: '2025-05-10T14:35:00',
-              read: true,
-            },
-            {
-              id: 'msg-9',
-              senderId: 'doc-2',
-              senderName: 'د. سارة الأحمد',
-              senderType: 'doctor',
-              content: 'نعم، أقترح بعض التعديلات البسيطة على الجرعات الدوائية والتمارين اليومية.',
-              timestamp: '2025-05-10T14:40:00',
-              read: true,
-            },
-            {
-              id: 'msg-10',
-              senderId: 'doc-2',
-              senderName: 'د. سارة الأحمد',
-              senderType: 'doctor',
-              content: 'تم تحديث خطة العلاج الخاصة بك. يرجى الاطلاع عليها.',
-              timestamp: '2025-05-10T14:45:00',
-              read: true,
-            },
-          ],
-        },
-      ];
-      
+      ];      
       setConversations(mockConversations);
       setLoading(false);
     };
     
     fetchConversations();
-  }, [user?.name]);
+  }, [user?.name, user?.doctorId, user?.id]);
   
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
-    
-    const newMsg: Message = {
+      const newMsg: Message = {
       id: `msg-${Date.now()}`,
-      senderId: 'patient-1',
+      senderId: user?.id || 'patient-1',
       senderName: user?.name || 'المريض',
       senderType: 'patient',
       content: newMessage,
@@ -244,8 +219,7 @@ const PatientConsultations = () => {
   const handleBackToConversations = () => {
     setShowConversations(true);
   };
-  
-  const containerVariants = {
+    const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -253,11 +227,6 @@ const PatientConsultations = () => {
         staggerChildren: 0.1,
       },
     },
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
   };
   
   if (loading) {
@@ -339,10 +308,12 @@ const PatientConsultations = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
+                </div>              ) : (
                 <div className="p-4 text-center text-gray-500">
-                  لا توجد محادثات حالية
+                  {!user?.doctorId ? 
+                    'لم يتم تعيين طبيب لك بعد. يرجى التواصل مع الإدارة.' :
+                    'لا توجد محادثات مع طبيبك المعالج بعد.'
+                  }
                 </div>
               )}
             </div>
@@ -457,9 +428,11 @@ const PatientConsultations = () => {
                 <MessageCircle className="h-16 w-16 text-gray-300 mb-4" />
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
                   لم يتم تحديد محادثة
-                </h3>
-                <p className="text-gray-500 max-w-md">
-                  اختر محادثة من القائمة أو ابدأ محادثة جديدة مع طبيبك المعالج
+                </h3>                <p className="text-gray-500 max-w-md">
+                  {!user?.doctorId ? 
+                    'لم يتم تعيين طبيب لك بعد. يرجى التواصل مع الإدارة لتعيين طبيب معالج.' :
+                    'اختر محادثة من القائمة أو ابدأ محادثة جديدة مع طبيبك المعالج'
+                  }
                 </p>
               </div>
             )}

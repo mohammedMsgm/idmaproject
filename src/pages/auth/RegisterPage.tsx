@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { useAuth, mockDoctors } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { getDoctors } from '../../services/authAPI';
 import Button from '../../components/common/Button';
 import Card from '../../components/common/Card';
 
@@ -11,8 +12,13 @@ interface RegisterFormData {
   email: string;
   password: string; 
   confirmPassword: string;
-  userType: 'patient' | 'doctor';
-  doctorId?: string;
+  userType: 'patient' | 'doctor';  doctorId?: string;
+}
+
+interface Doctor {
+  id: string;
+  name: string;
+  specialization: string;
 }
 
 const RegisterPage = () => {
@@ -20,6 +26,8 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(false);
 
   const {
     register,
@@ -31,9 +39,25 @@ const RegisterPage = () => {
       userType: 'patient',
     },
   });
-
   const userType = watch('userType');
-  const password = watch('password');
+  const password = watch('password');  // Fetch doctors when component mounts
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoadingDoctors(true);
+        const response = await getDoctors();
+        if (response.success && response.doctors) {
+          setDoctors(response.doctors);
+        }
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+      } finally {
+        setLoadingDoctors(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
@@ -107,18 +131,22 @@ const RegisterPage = () => {
             {/* اختيار الطبيب إذا كان مريض */}
             {userType === 'patient' && (
               <div className="mb-4">
-                <label htmlFor="doctorId" className="label">اختر الطبيب المعالج</label>
-                <select
+                <label htmlFor="doctorId" className="label">اختر الطبيب المعالج</label>                <select
                   id="doctorId"
                   {...register('doctorId')}
                   className="input"
+                  disabled={loadingDoctors}
                 >
                   <option value="">-- اختر الطبيب --</option>
-                  {mockDoctors.map(doctor => (
-                    <option key={doctor.id} value={doctor.id}>
-                      {doctor.name} - {doctor.specialization}
-                    </option>
-                  ))}
+                  {loadingDoctors ? (
+                    <option disabled>جارٍ تحميل الأطباء...</option>
+                  ) : (
+                    doctors.map(doctor => (
+                      <option key={doctor.id} value={doctor.id}>
+                        {doctor.name} - {doctor.specialization}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
             )}

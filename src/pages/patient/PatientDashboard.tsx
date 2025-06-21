@@ -1,69 +1,115 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
+import { getPatientDoctor } from '../../services/authAPI';
 import { 
-  FileText, 
-  MessageCircle, 
   Calendar, 
-  Clock, 
-  User, 
-  Phone 
+  Clock
 } from 'lucide-react';
 
-// بيانات وهمية للطبيب
-const mockDoctor = {
-  id: 'doc-1',
-  name: 'د. خالد العمري',
-  specialization: 'طب نفسي',
-  avatar: 'https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=150',
-};
+interface Doctor {
+  id: string;
+  name: string;
+  specialization: string;
+  avatar?: string;
+}
 
-// بيانات وهمية للمواعيد
-const mockAppointments = [
-  {
-    id: 'app-1',
-    date: '2025-05-15',
-    time: '10:00',
-    doctorName: 'د. خالد العمري',
-    status: 'scheduled',
-  },
-  {
-    id: 'app-2',
-    date: '2025-05-10',
-    time: '14:30',
-    doctorName: 'د. خالد العمري',
-    status: 'completed',
-  },
-  {
-    id: 'app-3',
-    date: '2025-04-28',
-    time: '11:15',
-    doctorName: 'د. خالد العمري',
-    status: 'completed',
-  },
-];
+interface Appointment {
+  id: string;
+  date: string;
+  time: string;
+  doctorName: string;
+  status: 'scheduled' | 'completed';
+}
 
 const PatientDashboard = () => {
-  // فقط اسم المستخدم من بيانات وهمية
-  const user = { name: 'أحمد محمد' };
+  const { user } = useAuth();
 
-  const [doctor, setDoctor] = useState<typeof mockDoctor | null>(null);
-  const [appointments, setAppointments] = useState<typeof mockAppointments>([]);
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    // محاكاة تأخير تحميل البيانات
-    const timer = setTimeout(() => {
-      setDoctor(mockDoctor);
-      setAppointments(mockAppointments);
-      setLoading(false);
-    }, 1000);
+    const fetchPatientData = async () => {
+      if (!user?.id) {
+        console.log('No user or user ID found');
+        setLoading(false);
+        return;
+      }
 
-    return () => clearTimeout(timer);
-  }, []);
+      try {
+        setLoading(true);
+        setError(null);
 
-  const upcomingAppointments = appointments.filter(app => app.status === 'scheduled');
-  const recentAppointments = appointments.filter(app => app.status === 'completed').slice(0, 3);
+        console.log('Fetching patient data for user:', user.id);
+        
+        // Fetch patient's assigned doctor
+        const doctorResponse = await getPatientDoctor(user.id);
+        
+        console.log('Doctor response:', doctorResponse);
+        
+        if (doctorResponse.success && doctorResponse.doctor) {
+          setDoctor(doctorResponse.doctor);
+          
+          // Generate mock appointments with the patient's assigned doctor
+          const mockUpcomingAppointments: Appointment[] = [
+            {
+              id: '1',
+              date: '2025-06-25',
+              time: '10:00 ص',
+              doctorName: doctorResponse.doctor.name,
+              status: 'scheduled'
+            },
+            {
+              id: '2',
+              date: '2025-07-02',
+              time: '2:00 م',
+              doctorName: doctorResponse.doctor.name,
+              status: 'scheduled'
+            }
+          ];
+
+          const mockRecentAppointments: Appointment[] = [
+            {
+              id: '3',
+              date: '2025-06-15',
+              time: '11:00 ص',
+              doctorName: doctorResponse.doctor.name,
+              status: 'completed'
+            },
+            {
+              id: '4',
+              date: '2025-06-08',
+              time: '3:00 م',
+              doctorName: doctorResponse.doctor.name,
+              status: 'completed'
+            },
+            {
+              id: '5',
+              date: '2025-06-01',
+              time: '9:30 ص',
+              doctorName: doctorResponse.doctor.name,
+              status: 'completed'
+            }
+          ];
+
+          setAppointments([...mockUpcomingAppointments, ...mockRecentAppointments]);
+        } else {
+          console.log('No doctor found or failed to fetch doctor');
+          setDoctor(null);
+          setAppointments([]);
+        }
+        
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+        setError('حدث خطأ أثناء تحميل البيانات');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPatientData();
+  }, [user?.id]);
 
   if (loading) {
     return (
@@ -73,14 +119,23 @@ const PatientDashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );  }
+  // Separate upcoming and recent appointments
+  const upcomingAppointments = appointments.filter(app => app.status === 'scheduled');
+  const recentAppointments = appointments.filter(app => app.status === 'completed');
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}        animate={{ opacity: 1, y: 0 }}
         className="text-3xl font-bold mb-6"
       >
-        مرحباً، {user.name}
+        مرحباً، {user?.name || 'ضيف'}
       </motion.h1>
 
       <motion.section
@@ -89,27 +144,21 @@ const PatientDashboard = () => {
         transition={{ delay: 0.2 }}
         className="mb-8"
       >
-        <h2 className="text-xl font-semibold mb-4">معلومات الطبيب المعالج</h2>
-        {doctor ? (
+        <h2 className="text-xl font-semibold mb-4">معلومات الطبيب المعالج</h2>        {doctor ? (
           <div className="flex items-center space-x-4 space-x-reverse bg-white p-4 rounded shadow">
             <img
-              src={doctor.avatar}
+              src={doctor.avatar || '/pfpdoc.png'}
               alt={doctor.name}
               className="w-20 h-20 rounded-full object-cover"
-            />
-            <div>
+            />            <div>
               <h3 className="text-lg font-bold">{doctor.name}</h3>
               <p className="text-gray-600">{doctor.specialization}</p>
-              <Link
-                to={`/doctor/${doctor.id}`}
-                className="text-primary-600 hover:underline mt-1 block"
-              >
-                عرض الملف الشخصي للطبيب
-              </Link>
             </div>
           </div>
         ) : (
-          <p>لا يوجد طبيب معالج معين.</p>
+          <div className="bg-gray-100 p-4 rounded shadow">
+            <p className="text-gray-600">لم يتم تعيين طبيب معالج بعد.</p>
+          </div>
         )}
       </motion.section>
 
