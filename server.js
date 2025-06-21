@@ -12,13 +12,22 @@ const PORT = process.env.PORT || 3001;
 // CORS configuration for production and development
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://your-frontend-app.onrender.com']
+    ? [
+        process.env.FRONTEND_URL || 'https://idmaproject-1.onrender.com',
+        'https://idmaproject-1.onrender.com', // Your actual frontend URL
+        'https://your-frontend-app.onrender.com' // Fallback
+      ]
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   optionsSuccessStatus: 200
 };
 
 // Middleware
+app.use((req, res, next) => {
+  console.log(`🌐 ${req.method} ${req.path} from origin: ${req.get('origin')}`);
+  next();
+});
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
