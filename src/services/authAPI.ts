@@ -16,7 +16,7 @@ export interface AuthResponse {
 
 // API Base URL - dynamically set based on environment
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://your-backend-app.onrender.com/api'  // Replace with your actual backend URL
+  ? 'https://idmaproject-gics.onrender.com/api'  // Your actual backend URL with /api endpoint
   : '/api';
 
 // Login function that calls backend API
@@ -25,8 +25,14 @@ export const loginUser = async (
   password: string, 
   userType: 'patient' | 'doctor'
 ): Promise<AuthResponse> => {
+  console.log('🔗 API_BASE_URL:', API_BASE_URL);
+  console.log('🌍 Environment:', import.meta.env.PROD ? 'Production' : 'Development');
+  
   try {
-    const response = await fetch(`${API_BASE_URL}/login`, {
+    const url = `${API_BASE_URL}/login`;
+    console.log('📡 Making request to:', url);
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,15 +41,24 @@ export const loginUser = async (
         email,
         password,
         userType
-      })    });
+      })
+    });
+
+    console.log('📨 Response status:', response.status);
+    console.log('📨 Response ok:', response.ok);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('❌ Response error:', errorText);
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
     }
 
-    return await response.json();
+    const result = await response.json();
+    console.log('✅ Login successful:', result);
+    return result;
   } catch (error) {
-    console.error('Login API error:', error instanceof Error ? error.message : String(error));
+    console.error('❌ Login API error:', error instanceof Error ? error.message : String(error));
+    console.log('🔄 Falling back to mock data');
     
     // Fallback to mock data if API is not available
     return mockLogin(email, password, userType);
@@ -70,16 +85,22 @@ export const registerUser = async (
         password,
         userType,
         doctorId
-      })
-    });
+      })    });
+
+    console.log('📨 Register response status:', response.status);
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      const errorText = await response.text();
+      console.error('❌ Register response error:', errorText);
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
     }
 
-    return await response.json();
+    const result = await response.json();
+    console.log('✅ Registration successful:', result);
+    return result;
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('❌ Register API error:', error instanceof Error ? error.message : String(error));
+    console.log('🔄 Falling back to mock data');
     
     // Fallback to mock registration if API is not available
     return mockRegister(name, email, password, userType, doctorId);
@@ -115,6 +136,27 @@ export const getDoctors = async () => {
         { id: '9', name: 'د. بورزق عائشة', specialization: 'اخصائي اجتماعي' },
       ]
     };
+  }
+};
+
+// Health check function to test backend connectivity
+export const healthCheck = async (): Promise<{status: string, message: string}> => {
+  console.log('🏥 Testing backend health...');
+  console.log('🔗 Health check URL:', `${API_BASE_URL.replace('/api', '')}/health`);
+  
+  try {
+    const response = await fetch(`${API_BASE_URL.replace('/api', '')}/health`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    console.log('✅ Backend health check successful:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Backend health check failed:', error);
+    return { status: 'ERROR', message: error instanceof Error ? error.message : String(error) };
   }
 };
 
