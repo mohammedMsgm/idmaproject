@@ -191,7 +191,7 @@ const DoctorPrescriptions = () => {
       month: 'long',
       day: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString('ar-SA', options);
+    return new Date(dateString).toLocaleDateString('ar', options);
   };
   
   const handlePrescriptionClick = (prescription: Prescription) => {

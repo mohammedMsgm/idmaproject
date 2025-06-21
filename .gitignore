@@ -23,3 +23,28 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Database files (local development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Test files (optional - you may want to keep these)
+test-*.js
+check-*.js
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Local development scripts
+setup-database.bat
+setup-database.ps1
+start-full-stack.bat
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

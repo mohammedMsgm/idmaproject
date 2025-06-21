@@ -1,11 +1,14 @@
 import { Pool } from 'pg';
 
 const pool = new Pool({
+  // Use DATABASE_URL if available (Neon), otherwise use individual parameters
+  connectionString: process.env.DATABASE_URL,
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
   database: process.env.DB_NAME || 'idma_platform',
   password: process.env.DB_PASSWORD || 'password',
   port: parseInt(process.env.DB_PORT || '5432'),
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
 export { pool };

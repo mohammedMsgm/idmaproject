@@ -1,0 +1,13 @@
+# Render Deployment Configuration
+
+# Build command
+npm install && npm run build
+
+# Start command  
+npm start
+
+# Environment
+NODE_VERSION=18
+
+# Health check endpoint
+/health
