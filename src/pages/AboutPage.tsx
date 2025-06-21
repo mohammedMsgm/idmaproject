@@ -44,32 +44,7 @@ const AboutPage = () => {
     },
   ];
   
-  const team = [
-    {
-      name: 'د. خالد العمري',
-      role: 'المدير الطبي - طبيب نفسي',
-      image: 'https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=400',
-      bio: 'طبيب نفسي متخصص في علاج إدمان المراهقين مع خبرة أكثر من 15 عامًا في المجال.',
-    },
-    {
-      name: 'د. سارة الأحمد',
-      role: 'رئيسة قسم العلاج النفسي',
-      image: 'https://images.pexels.com/photos/5214413/pexels-photo-5214413.jpeg?auto=compress&cs=tinysrgb&w=400',
-      bio: 'متخصصة في العلاج المعرفي السلوكي وتطوير برامج العلاج المتكاملة لإدمان المراهقين.',
-    },
-    {
-      name: 'د. أحمد محمود',
-      role: 'استشاري الطب النفسي',
-      image: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=400',
-      bio: 'خبير في تشخيص وعلاج الاضطرابات المصاحبة للإدمان لدى المراهقين.',
-    },
-    {
-      name: 'أ. نورا حسن',
-      role: 'أخصائية علاج نفسي',
-      image: 'https://images.pexels.com/photos/6234600/pexels-photo-6234600.jpeg?auto=compress&cs=tinysrgb&w=400',
-      bio: 'متخصصة في العلاج الأسري وتقديم الدعم النفسي للمراهقين وعائلاتهم.',
-    },
-  ];
+  
   
   return (
     <motion.div
@@ -175,41 +150,7 @@ const AboutPage = () => {
         </div>
       </motion.section>
       
-      {/* Our Team */}
-      <motion.section variants={itemVariants} className="mb-16">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-            فريقنا
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            يضم فريقنا نخبة من الأطباء والمعالجين المتخصصين في مجال علاج إدمان المراهقين
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {team.map((member, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-            >
-              <div className="h-56 overflow-hidden">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                  {member.name}
-                </h3>
-                <p className="text-primary-600 mb-3">{member.role}</p>
-                <p className="text-gray-600">{member.bio}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.section>
+      
       
       {/* CTA */}
       <motion.section variants={itemVariants}>
